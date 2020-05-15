@@ -9,4 +9,6 @@ Automatically shortens the line segment length to cover only some fraction of th
 **directed_example**
 Uses addEdge to draw a random network graph using plotly.
 
-![directed_example output](https://github.com/redransil/plotly-dirgraph/directed_example.png?raw=true)
+Example output, from dash:
+
+![directed_example output](https://github.com/redransil/plotly-dirgraph/blob/master/directed_example.png)
