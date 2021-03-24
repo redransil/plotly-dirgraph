@@ -7,6 +7,8 @@ Created on Fri May 15 11:45:07 2020
 """
 
 import math
+from typing import List
+from itertools import chain
 
 # Start and end are lists defining start and end points
 # Edge x and y are lists used to construct the graph
@@ -82,3 +84,37 @@ def addEdge(start, end, edge_x, edge_y, lengthFrac=1, arrowPos = None, arrowLeng
     
     
     return edge_x, edge_y
+
+def add_arrows(source_x: List[float], target_x: List[float], source_y: List[float], target_y: List[float],
+               arrowLength=0.025, arrowAngle=30):
+    pointx = list(map(lambda x: x[0] + (x[1] - x[0]) / 2, zip(source_x, target_x)))
+    pointy = list(map(lambda x: x[0] + (x[1] - x[0]) / 2, zip(source_y, target_y)))
+    etas = list(map(lambda x: math.degrees(math.atan((x[1] - x[0]) / (x[3] - x[2]))),
+                    zip(source_x, target_x, source_y, target_y)))
+
+    signx = list(map(lambda x: (x[1] - x[0]) / abs(x[1] - x[0]), zip(source_x, target_x)))
+    signy = list(map(lambda x: (x[1] - x[0]) / abs(x[1] - x[0]), zip(source_y, target_y)))
+
+    dx = list(map(lambda x: arrowLength * math.sin(math.radians(x + arrowAngle)), etas))
+    dy = list(map(lambda x: arrowLength * math.cos(math.radians(x + arrowAngle)), etas))
+    none_spacer = [None for _ in range(len(pointx))]
+    arrow_line_x = list(map(lambda x: x[0] - x[1] ** 2 * x[2] * x[3], zip(pointx, signx, signy, dx)))
+    arrow_line_y = list(map(lambda x: x[0] - x[1] ** 2 * x[2] * x[3], zip(pointy, signx, signy, dy)))
+
+    arrow_line_1x_coords = list(chain(*zip(pointx, arrow_line_x, none_spacer)))
+    arrow_line_1y_coords = list(chain(*zip(pointy, arrow_line_y, none_spacer)))
+
+    dx = list(map(lambda x: arrowLength * math.sin(math.radians(x - arrowAngle)), etas))
+    dy = list(map(lambda x: arrowLength * math.cos(math.radians(x - arrowAngle)), etas))
+    none_spacer = [None for _ in range(len(pointx))]
+    arrow_line_x = list(map(lambda x: x[0] - x[1] ** 2 * x[2] * x[3], zip(pointx, signx, signy, dx)))
+    arrow_line_y = list(map(lambda x: x[0] - x[1] ** 2 * x[2] * x[3], zip(pointy, signx, signy, dy)))
+
+    arrow_line_2x_coords = list(chain(*zip(pointx, arrow_line_x, none_spacer)))
+    arrow_line_2y_coords = list(chain(*zip(pointy, arrow_line_y, none_spacer)))
+
+    x_arrows = arrow_line_1x_coords + arrow_line_2x_coords
+    y_arrows = arrow_line_1y_coords + arrow_line_2y_coords
+
+    return x_arrows, y_arrows
+
